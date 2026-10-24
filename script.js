@@ -1,5 +1,5 @@
 // ==========================================
-// GALAXY DEFENDER 3D - SCRIPT PRINCIPAL
+// GALAXY DEFENDER 3D - SCRIPT CORREGIDO
 // ==========================================
 
 let scene, camera, renderer;
@@ -67,7 +67,7 @@ function playSound(type) {
             osc.stop(now + 0.1);
         }
     } catch (e) {
-        // Ignorar errores de audio si el navegador bloquea autoplay
+        // Ignorar errores de audio
     }
 }
 
@@ -75,7 +75,6 @@ function playSound(type) {
 function initThree() {
     const container = document.body;
 
-    // Escena y Cámara
     scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x050510, 0.015);
 
@@ -104,7 +103,6 @@ function initThree() {
     createStarfield();
     createPlayer();
 
-    // Eventos de Ventana y Teclado
     window.addEventListener('resize', onWindowResize);
     window.addEventListener('keydown', (e) => handleKeyDown(e, true));
     window.addEventListener('keyup', (e) => handleKeyDown(e, false));
@@ -113,7 +111,6 @@ function initThree() {
     animate();
 }
 
-// Fondo de Estrellas Procedural
 function createStarfield() {
     const starCount = 2000;
     const geometry = new THREE.BufferGeometry();
@@ -131,25 +128,21 @@ function createStarfield() {
     scene.add(stars);
 }
 
-// Creación de la Nave del Jugador (3D Geometrías Compuestas)
 function createPlayer() {
     player = new THREE.Group();
 
-    // Fuselaje principal
     const bodyGeo = new THREE.ConeGeometry(1, 3, 4);
     bodyGeo.rotateX(Math.PI / 2);
     const bodyMat = new THREE.MeshStandardMaterial({ color: 0x00ffff, roughness: 0.3, metalness: 0.8 });
     shipMesh = new THREE.Mesh(bodyGeo, bodyMat);
     player.add(shipMesh);
 
-    // Alas
     const wingGeo = new THREE.BoxGeometry(3.5, 0.1, 1.2);
     const wingMat = new THREE.MeshStandardMaterial({ color: 0x0088ff, roughness: 0.4, metalness: 0.6 });
     const wings = new THREE.Mesh(wingGeo, wingMat);
     wings.position.set(0, 0, 0.5);
     player.add(wings);
 
-    // Cabina (Cockpit)
     const cockpitGeo = new THREE.SphereGeometry(0.4, 8, 8);
     const cockpitMat = new THREE.MeshStandardMaterial({ color: 0xff00ff, roughness: 0.1, emissive: 0x550055 });
     const cockpit = new THREE.Mesh(cockpitGeo, cockpitMat);
@@ -160,9 +153,7 @@ function createPlayer() {
     scene.add(player);
 }
 
-// Generación de Enemigos según el Nivel
 function spawnEnemies() {
-    // Limpiar enemigos anteriores si quedan
     enemies.forEach(e => scene.remove(e.mesh));
     enemies = [];
 
@@ -181,14 +172,12 @@ function spawnEnemies() {
 
         const alienGroup = new THREE.Group();
 
-        // Cuerpo Alienígena con geometrías futuristas
         const coreGeo = new THREE.OctahedronGeometry(1.2, 0);
         const colorVal = currentLevel === 1 ? 0xff2255 : 0xffaa00;
         const coreMat = new THREE.MeshStandardMaterial({ color: colorVal, roughness: 0.2, metalness: 0.9, emissive: 0x330011 });
         const coreMesh = new THREE.Mesh(coreGeo, coreMat);
         alienGroup.add(coreMesh);
 
-        // Anillo rotativo
         const ringGeo = new THREE.TorusGeometry(1.6, 0.1, 8, 20);
         const ringMat = new THREE.MeshStandardMaterial({ color: 0x00ffff, emissive: 0x004444 });
         const ringMesh = new THREE.Mesh(ringGeo, ringMat);
@@ -208,7 +197,6 @@ function spawnEnemies() {
     }
 }
 
-// Control de Teclado
 function handleKeyDown(e, isDown) {
     if (e.code === 'KeyW') keys.w = isDown;
     if (e.code === 'KeyS') keys.s = isDown;
@@ -235,10 +223,9 @@ function togglePause() {
     }
 }
 
-// Disparo del Jugador
 function shootLaser() {
     playSound('laser');
-    const laserGeo = new THREE.CylinderGeometry(0.1, 0.1, 2, 8);
+    const laserGeo = new THREE.CylinderGeometry(0.15, 0.15, 3, 8);
     laserGeo.rotateX(Math.PI / 2);
     const laserMat = new THREE.MeshBasicMaterial({ color: 0x00ffff });
 
@@ -247,12 +234,11 @@ function shootLaser() {
     laserMesh.position.z -= 1;
     scene.add(laserMesh);
 
-    lasers.push({ mesh: laserMesh, speed: 1.2 });
+    lasers.push({ mesh: laserMesh, speed: 1.5 });
 }
 
-// Disparo de Enemigos
 function enemyShoot(enemy) {
-    const laserGeo = new THREE.CylinderGeometry(0.12, 0.12, 1.8, 8);
+    const laserGeo = new THREE.CylinderGeometry(0.15, 0.15, 2.5, 8);
     laserGeo.rotateX(Math.PI / 2);
     const colorVal = currentLevel === 1 ? 0xff0055 : 0xff5500;
     const laserMat = new THREE.MeshBasicMaterial({ color: colorVal });
@@ -261,14 +247,13 @@ function enemyShoot(enemy) {
     laserMesh.position.copy(enemy.mesh.position);
     scene.add(laserMesh);
 
-    enemyLasers.push({ mesh: laserMesh, speed: 0.5 + currentLevel * 0.15 });
+    enemyLasers.push({ mesh: laserMesh, speed: 0.6 + currentLevel * 0.15 });
 }
 
-// Efectos de Explosión de Partículas
 function createExplosion(pos, colorHex = 0xffaa00) {
     playSound('explosion');
     const particleCount = 20;
-    const geo = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+    const geo = new THREE.BoxGeometry(0.25, 0.25, 0.25);
     const mat = new THREE.MeshBasicMaterial({ color: colorHex });
 
     for (let i = 0; i < particleCount; i++) {
@@ -277,15 +262,14 @@ function createExplosion(pos, colorHex = 0xffaa00) {
         scene.add(mesh);
 
         const velocity = new THREE.Vector3(
-            (Math.random() - 0.5) * 0.4,
-            (Math.random() - 0.5) * 0.4,
-            (Math.random() - 0.5) * 0.4
+            (Math.random() - 0.5) * 0.5,
+            (Math.random() - 0.5) * 0.5,
+            (Math.random() - 0.5) * 0.5
         );
         particles.push({ mesh, velocity, life: 30 });
     }
 }
 
-// Bucle Principal de Actualización (Game Loop)
 function animate() {
     requestAnimationFrame(animate);
 
@@ -300,41 +284,31 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-// Movimiento de la Nave
 function updatePlayer() {
     if (keys.a && player.position.x > -playerBounds.x) player.position.x -= playerSpeed;
     if (keys.d && player.position.x < playerBounds.x) player.position.x += playerSpeed;
     if (keys.w && player.position.z > playerBounds.zMin) player.position.z -= playerSpeed;
     if (keys.s && player.position.z < playerBounds.zMax) player.position.z += playerSpeed;
 
-    // Inclinación al girar
     const targetTilt = (keys.a ? 0.4 : 0) + (keys.d ? -0.4 : 0);
     shipMesh.rotation.z += (targetTilt - shipMesh.rotation.z) * 0.1;
 }
 
-// Lógica y IA de Enemigos
 function updateEnemies() {
     const speedMult = currentLevel === 1 ? 1 : 1.4;
 
     enemies.forEach((enemy, index) => {
-        // Movimiento oscilatorio lateral
         enemy.mesh.position.x = enemy.initialX + Math.sin(Date.now() * 0.003 * speedMult + index) * 3;
-        
-        // Avance gradual hacia el jugador
         enemy.mesh.position.z += 0.02 * speedMult;
-
-        // Rotación visual del alien
         enemy.mesh.rotation.y += 0.03;
 
-        // Disparos enemigos periódicos
         enemy.shootTimer--;
         if (enemy.shootTimer <= 0) {
             enemyShoot(enemy);
             enemy.shootTimer = Math.random() * 80 + (currentLevel === 1 ? 60 : 35);
         }
 
-        // Colisión alien con jugador
-        if (enemy.mesh.position.distanceTo(player.position) < 2.0) {
+        if (enemy.mesh.position.distanceTo(player.position) < 2.5) {
             playerHealth -= 25;
             updateHUD();
             createExplosion(enemy.mesh.position, 0xff0000);
@@ -346,12 +320,11 @@ function updateEnemies() {
         }
     });
 
-    // Actualizar disparos enemigos
     for (let i = enemyLasers.length - 1; i >= 0; i--) {
         const l = enemyLasers[i];
         l.mesh.position.z += l.speed;
 
-        if (l.mesh.position.distanceTo(player.position) < 1.5) {
+        if (l.mesh.position.distanceTo(player.position) < 2.0) {
             playSound('hit');
             playerHealth -= 10;
             updateHUD();
@@ -368,24 +341,22 @@ function updateEnemies() {
     }
 }
 
-// Actualizar Láseres del Jugador y Colisiones
 function updateLasers() {
     for (let i = lasers.length - 1; i >= 0; i--) {
         const l = lasers[i];
         l.mesh.position.z -= l.speed;
 
-        // Remover si sale de pantalla
         if (l.mesh.position.z < -50) {
             scene.remove(l.mesh);
             lasers.splice(i, 1);
             continue;
         }
 
-        // Comprobar colisión con enemigos
         let laserRemoved = false;
         for (let j = enemies.length - 1; j >= 0; j--) {
             const enemy = enemies[j];
-            if (l.mesh.position.distanceTo(enemy.mesh.position) < 1.8) {
+            // CORRECCIÓN: Radio de colisión optimizado a 2.5 unidades para asegurar el impacto inmediato
+            if (l.mesh.position.distanceTo(enemy.mesh.position) < 2.5) {
                 enemy.health--;
                 createExplosion(enemy.mesh.position, 0x00ffff);
                 
@@ -409,7 +380,6 @@ function updateLasers() {
     }
 }
 
-// Sistema de Partículas
 function updateParticles() {
     for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
@@ -423,7 +393,6 @@ function updateParticles() {
     }
 }
 
-// Control de Progreso de Niveles
 function checkLevelProgress() {
     if (enemiesRemaining <= 0) {
         if (currentLevel === 1) {
@@ -457,7 +426,6 @@ function triggerVictory() {
     document.getElementById('victory-screen').classList.remove('hidden');
 }
 
-// Radar 2D Minimap Canvas
 function drawRadar() {
     const canvas = document.getElementById('radar-canvas');
     const ctx = canvas.getContext('2d');
@@ -467,13 +435,11 @@ function drawRadar() {
     const cy = canvas.height / 2;
     const scale = 2.5;
 
-    // Dibujar jugador en el centro
     ctx.fillStyle = '#00ffff';
     ctx.beginPath();
     ctx.arc(cx, cy, 3, 0, Math.PI * 2);
     ctx.fill();
 
-    // Dibujar enemigos en el radar
     ctx.fillStyle = '#ff2255';
     enemies.forEach(e => {
         const dx = (e.mesh.position.x - player.position.x) * scale;
@@ -492,7 +458,6 @@ function updateHUD() {
     document.getElementById('health-bar-fill').style.width = Math.max(0, playerHealth) + '%';
 }
 
-// Configuración de Botones de Interfaz
 function setupUIEvents() {
     document.getElementById('btn-play').addEventListener('click', () => {
         initAudio();
@@ -561,5 +526,4 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-// Arrancar motor 3D al cargar la página
 window.onload = initThree;
