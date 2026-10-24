@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GALAXY DEFENDER 3D</title>
+    <!-- Estilos CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <!-- Menú Principal -->
+    <div id="main-menu" class="screen">
+        <h1 class="glow-title">GALAXY DEFENDER 3D</h1>
+        <div class="menu-buttons">
+            <button id="btn-play" class="neon-btn">JUGAR</button>
+            <button id="btn-instructions" class="neon-btn">INSTRUCCIONES</button>
+        </div>
+    </div>
+
+    <!-- Pantalla de Instrucciones -->
+    <div id="instructions-screen" class="screen hidden">
+        <h2>INSTRUCCIONES</h2>
+        <div class="instructions-box">
+            <p><strong>W:</strong> Avanzar</p>
+            <p><strong>S:</strong> Retroceder</p>
+            <p><strong>A:</strong> Moverse a la izquierda</p>
+            <p><strong>D:</strong> Moverse a la derecha</p>
+            <p><strong>Espacio:</strong> Disparar láseres</p>
+            <p><strong>ESC:</strong> Pausar o reanudar el juego</p>
+            <p class="objective">Objetivo: Destruye a todos los enemigos alienígenas en exactamente dos niveles para salvar la galaxia.</p>
+        </div>
+        <button id="btn-back" class="neon-btn">VOLVER</button>
+    </div>
+
+    <!-- HUD de Juego -->
+    <div id="game-hud" class="hidden">
+        <div class="hud-top">
+            <div class="hud-item">PUNTUACIÓN: <span id="score-val">0</span></div>
+            <div class="hud-item">NIVEL: <span id="level-val">1</span></div>
+            <div class="hud-item">ENEMIGOS: <span id="enemies-val">0</span></div>
+            <div class="hud-item">ELIMINADOS: <span id="kills-val">0</span></div>
+        </div>
+        <div class="hud-bottom">
+            <div class="health-container">
+                <span>VIDA:</span>
+                <div class="health-bar-bg">
+                    <div id="health-bar-fill"></div>
+                </div>
+            </div>
+        </div>
+        <!-- Minimapa / Radar -->
+        <div id="radar-container">
+            <canvas id="radar-canvas" width="120" height="120"></canvas>
+        </div>
+    </div>
+
+    <!-- Pantalla de Pausa -->
+    <div id="pause-screen" class="screen hidden">
+        <h2>JUEGO PAUSADO</h2>
+        <div class="menu-buttons">
+            <button id="btn-resume" class="neon-btn">REANUDAR</button>
+            <button id="btn-restart-pause" class="neon-btn">REINICIAR</button>
+            <button id="btn-quit" class="neon-btn">SALIR AL MENÚ</button>
+        </div>
+    </div>
+
+    <!-- Pantalla de Nivel Completado -->
+    <div id="level-clear-screen" class="screen hidden">
+        <h2 class="glow-title">¡NIVEL COMPLETADO!</h2>
+        <p>Preparando el siguiente nivel...</p>
+        <button id="btn-next-level" class="neon-btn">SIGUIENTE NIVEL</button>
+    </div>
+
+    <!-- Pantalla de Derrota (Game Over) -->
+    <div id="game-over-screen" class="screen hidden">
+        <h2 class="danger-title">GAME OVER</h2>
+        <p>Tu nave ha sido destruida.</p>
+        <button id="btn-restart-game" class="neon-btn">REINICIAR JUEGO</button>
+    </div>
+
+    <!-- Pantalla de Victoria Final -->
+    <div id="victory-screen" class="screen hidden">
+        <h2 class="victory-title">¡VICTORIA!</h2>
+        <p>¡Felicidades! Has salvado la galaxia.</p>
+        <p>Puntuación Final: <span id="final-score">0</span></p>
+        <p>Total Eliminados: <span id="final-kills">0</span></p>
+        <button id="btn-play-again" class="neon-btn">JUGAR NUEVAMENTE</button>
+    </div>
+
+    <!-- Script del Juego -->
+    <script src="script.js"></script>
+</body>
+</html>
